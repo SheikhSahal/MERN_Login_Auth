@@ -50,7 +50,7 @@ router.post("/", async (req, res) => {
 
         // log the user in
         const token = jwt.sign({
-            user: existingUser._id,
+            user: savedUser._id,
         },
         process.env.JWT_SECRET);
 
@@ -92,6 +92,17 @@ router.post("/login", async(req, res) => {
             errorMessage: "Wrong email or password."
     });   
 
+    // log the user in
+    const token = jwt.sign({
+        user: existingUser._id,
+    },
+    process.env.JWT_SECRET);
+
+    // send the token in a HTTP-only cookie
+    res.cookie("token",token,{
+        httpOnly: true,
+    }).send();
+
     }
     catch (err) {
         console.error(err)
@@ -106,5 +117,7 @@ router.get("/logout",(req, res) => {
         expires: new Date(0)
     }).send();
 })
+
+
 
 module.exports = router;
